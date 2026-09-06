@@ -9,9 +9,10 @@ dependencies = [
     "streamlit>=1.38.0",
     "pillow>=10.0.0",
     "ultralytics>=8.3.0",
+    "opencv-python>=4.10.0",
+    "pandas>=2.2.0",
     "torch",
     "torchvision",
-    "pytest>=9.1.1",
 ]
 
 [dependency-groups]

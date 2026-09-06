@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Settings:
     """
-    Configuration settings for SmartPark AI.
+    Central configuration settings for SmartPark AI.
     """
 
     # ========================================================
@@ -25,13 +25,9 @@ class Settings:
     # ========================================================
 
     APP_DIR = BASE_DIR / "app"
-
     DATA_DIR = BASE_DIR / "data"
-
     MODELS_DIR = BASE_DIR / "models"
-
     OUTPUT_DIR = BASE_DIR / "outputs"
-
     CONFIG_DIR = BASE_DIR / "config"
 
     # ========================================================
@@ -56,7 +52,7 @@ class Settings:
     DATA_YAML_FILE = DATASET_DIR / "data.yaml"
 
     # ========================================================
-    # PARKING CONFIGURATION
+    # PARKING SLOT CONFIGURATION
     # ========================================================
 
     PARKING_SLOTS_FILE = (
@@ -64,7 +60,7 @@ class Settings:
     )
 
     # ========================================================
-    # PHASE 1 OUTPUT
+    # PHASE 1 - DATASET
     # ========================================================
 
     DATASET_REPORT_FILE = (
@@ -72,7 +68,7 @@ class Settings:
     )
 
     # ========================================================
-    # PHASE 2 — YOLO CONFIGURATION
+    # PHASE 2 - YOLO TRAINING
     # ========================================================
 
     PRETRAINED_MODEL = "yolov8n.pt"
@@ -87,14 +83,16 @@ class Settings:
 
     CONFIDENCE_THRESHOLD = 0.25
 
-    # Where Ultralytics training results are stored
+    IOU_THRESHOLD = 0.45
+
     TRAINING_OUTPUT_DIR = (
         OUTPUT_DIR / "training"
     )
 
-    TRAINING_RUN_NAME = "smartpark_yolov8n"
+    TRAINING_RUN_NAME = (
+        "smartpark_yolov8n"
+    )
 
-    # Expected final model location
     BEST_MODEL_FILE = (
         TRAINING_OUTPUT_DIR
         / TRAINING_RUN_NAME
@@ -109,9 +107,69 @@ class Settings:
         / "last.pt"
     )
 
-    # Prediction results
+    # ========================================================
+    # PHASE 3 - INFERENCE
+    # ========================================================
+
     PREDICTION_OUTPUT_DIR = (
         OUTPUT_DIR / "predictions"
+    )
+
+    VIDEO_OUTPUT_DIR = (
+        OUTPUT_DIR / "videos"
+    )
+
+    EMPTY_CLASS_NAME = "space-empty"
+
+    OCCUPIED_CLASS_NAME = "space-occupied"
+
+    VIDEO_CODEC = "mp4v"
+
+    # ========================================================
+    # PHASE 4 - VEHICLE DETECTION
+    # ========================================================
+
+    # IMPORTANT:
+    # Put pretrained YOLOv8 model here:
+    #
+    # E:/SmartPark_AI/models/yolov8n.pt
+
+    VEHICLE_MODEL = (
+        MODELS_DIR / "yolov8n.pt"
+    )
+
+    VEHICLE_CONFIDENCE_THRESHOLD = 0.30
+
+    VEHICLE_IOU_THRESHOLD = 0.45
+
+    VEHICLE_CLASS_NAMES = {
+        "car",
+        "motorcycle",
+        "bus",
+        "truck",
+    }
+
+    COMBINED_OUTPUT_DIR = (
+        OUTPUT_DIR / "combined_predictions"
+    )
+
+    # ========================================================
+    # PHASE 5 - STREAMLIT UI
+    # ========================================================
+
+    UI_TITLE = "SmartPark AI"
+
+    UI_SUBTITLE = (
+        "AI-Powered Parking Occupancy "
+        "& Vehicle Detection System"
+    )
+
+    EVALUATION_METRICS_FILE = (
+        OUTPUT_DIR / "evaluation_metrics.json"
+    )
+
+    TEMP_DIR = (
+        OUTPUT_DIR / "temp"
     )
 
     # ========================================================
@@ -125,5 +183,20 @@ class Settings:
         ".bmp",
     }
 
+    # ========================================================
+    # SUPPORTED VIDEO EXTENSIONS
+    # ========================================================
+
+    VIDEO_EXTENSIONS = {
+        ".mp4",
+        ".avi",
+        ".mov",
+        ".mkv",
+    }
+
+
+# ============================================================
+# GLOBAL SETTINGS OBJECT
+# ============================================================
 
 settings = Settings()

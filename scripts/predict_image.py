@@ -1,64 +1,23 @@
 import argparse
+import json
 from pathlib import Path
 
 from app.config import settings
-
-from app.detection.model import (
-    get_device,
-    load_trained_model,
+from app.detection.inference import (
+    predict_image,
 )
 
 
 # ============================================================
-# PREDICT
-# ============================================================
-
-def predict_image(
-    image_path: Path,
-) -> None:
-    """
-    Run parking detection on one image.
-    """
-
-    if not image_path.exists():
-
-        raise FileNotFoundError(
-            f"Image not found: {image_path}"
-        )
-
-    model = load_trained_model()
-
-    model.predict(
-        source=str(image_path),
-
-        conf=settings.CONFIDENCE_THRESHOLD,
-
-        imgsz=settings.IMAGE_SIZE,
-
-        device=get_device(),
-
-        save=True,
-
-        project=str(
-            settings.PREDICTION_OUTPUT_DIR
-        ),
-
-        name="image_prediction",
-
-        exist_ok=True,
-    )
-
-
-# ============================================================
-# COMMAND LINE
+# MAIN
 # ============================================================
 
 def main() -> None:
 
     parser = argparse.ArgumentParser(
         description=(
-            "Run SmartPark AI prediction "
-            "on a parking image."
+            "Run SmartPark AI inference "
+            "on one parking image."
         )
     )
 
@@ -74,23 +33,123 @@ def main() -> None:
         args.image
     ).resolve()
 
-    predict_image(
-        image_path
+    # --------------------------------------------------------
+    # Output location
+    # --------------------------------------------------------
+
+    output_dir = (
+        settings.PREDICTION_OUTPUT_DIR
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    output_image = (
+        output_dir
+        / f"predicted_{image_path.name}"
+    )
+
+    # --------------------------------------------------------
+    # Predict
+    # --------------------------------------------------------
+
+    result = predict_image(
+        image_path=image_path,
+        output_path=output_image,
+    )
+
+    statistics = result[
+        "statistics"
+    ]
+
+    # --------------------------------------------------------
+    # Print statistics
+    # --------------------------------------------------------
+
+    print()
+
+    print("=" * 70)
+
+    print(
+        "SmartPark AI - Image Prediction"
+    )
+
+    print("=" * 70)
+
+    print(
+        f"Image: {image_path.name}"
+    )
+
+    print(
+        f"Total spaces: "
+        f"{statistics['total_spaces']}"
+    )
+
+    print(
+        f"Occupied: "
+        f"{statistics['occupied_spaces']}"
+    )
+
+    print(
+        f"Available: "
+        f"{statistics['empty_spaces']}"
+    )
+
+    print(
+        f"Occupancy: "
+        f"{statistics['occupancy_percentage']}%"
+    )
+
+    print(
+        f"Availability: "
+        f"{statistics['availability_percentage']}%"
     )
 
     print()
 
     print(
-        "Prediction completed."
+        f"Annotated image saved to:"
     )
 
     print(
-        "Results saved to:"
+        output_image
+    )
+
+    # --------------------------------------------------------
+    # Save JSON result
+    # --------------------------------------------------------
+
+    report_file = (
+        output_dir
+        / f"{image_path.stem}_result.json"
+    )
+
+    json_result = {
+        "image": image_path.name,
+        "statistics": statistics,
+        "detections": result[
+            "detections"
+        ],
+    }
+
+    report_file.write_text(
+        json.dumps(
+            json_result,
+            indent=4,
+        ),
+        encoding="utf-8",
+    )
+
+    print()
+
+    print(
+        f"Detection report saved to:"
     )
 
     print(
-        settings.PREDICTION_OUTPUT_DIR
-        / "image_prediction"
+        report_file
     )
 
 

@@ -1058,8 +1058,9 @@ name = "smartpark-ai"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "opencv-python" },
+    { name = "pandas" },
     { name = "pillow" },
-    { name = "pytest" },
     { name = "streamlit" },
     { name = "torch" },
     { name = "torchvision" },
@@ -1073,8 +1074,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "opencv-python", specifier = ">=4.10.0" },
+    { name = "pandas", specifier = ">=2.2.0" },
     { name = "pillow", specifier = ">=10.0.0" },
-    { name = "pytest", specifier = ">=9.1.1" },
     { name = "streamlit", specifier = ">=1.38.0" },
     { name = "torch", index = "https://download.pytorch.org/whl/cu118" },
     { name = "torchvision", index = "https://download.pytorch.org/whl/cu118" },
